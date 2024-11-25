@@ -1,6 +1,7 @@
 package info.bitrich.xchangestream.okex;
 
 import info.bitrich.xchangestream.core.ProductSubscription;
+import info.bitrich.xchangestream.core.StreamingAccountService;
 import info.bitrich.xchangestream.core.StreamingExchange;
 import info.bitrich.xchangestream.core.StreamingMarketDataService;
 import info.bitrich.xchangestream.core.StreamingTradeService;
@@ -30,6 +31,8 @@ public class OkexStreamingExchange extends OkexExchange implements StreamingExch
 
   private OkexStreamingTradeService streamingTradeService;
 
+  private OkexStreamingAccountService streamingAccountService;
+
   public OkexStreamingExchange() {}
 
   @Override
@@ -37,7 +40,7 @@ public class OkexStreamingExchange extends OkexExchange implements StreamingExch
     this.streamingService = new OkexStreamingService(getApiUrl(), this.exchangeSpecification);
     this.streamingMarketDataService = new OkexStreamingMarketDataService(streamingService);
     this.streamingTradeService = new OkexStreamingTradeService(streamingService, exchangeMetaData);
-
+    this.streamingAccountService = new OkexStreamingAccountService(streamingService);
     return streamingService.connect();
   }
 
@@ -86,6 +89,11 @@ public class OkexStreamingExchange extends OkexExchange implements StreamingExch
   @Override
   public StreamingTradeService getStreamingTradeService() {
     return streamingTradeService;
+  }
+
+  @Override
+  public StreamingAccountService getStreamingAccountService() {
+    return streamingAccountService;
   }
 
   @Override

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import info.bitrich.xchangestream.okex.dto.OkexLoginMessage;
 import info.bitrich.xchangestream.okex.dto.OkexSubscribeMessage;
+import info.bitrich.xchangestream.okex.dto.OkexSubscribeMessage.SubscriptionTopic;
 import info.bitrich.xchangestream.service.netty.JsonNettyStreamingService;
 import info.bitrich.xchangestream.service.netty.WebSocketClientHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -22,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import org.apache.commons.lang3.StringUtils;
 import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.exceptions.ExchangeException;
 import org.knowm.xchange.exceptions.NotYetImplementedForExchangeException;
@@ -45,6 +47,8 @@ public class OkexStreamingService extends JsonNettyStreamingService {
   public static final String FUNDING_RATE = "funding-rate";
   public static final String TICKERS = "tickers";
   public static final String USERTRADES = "orders";
+  public static final String POSITIONS = "positions";
+  public static final String BALANCE_AND_POSITION = "balance_and_position";
 
   private final Observable<Long> pingPongSrc = Observable.interval(15, 15, TimeUnit.SECONDS);
 
@@ -57,7 +61,7 @@ public class OkexStreamingService extends JsonNettyStreamingService {
   private volatile boolean loginDone = false;
 
   private volatile boolean needToResubscribeChannels = false;
-  
+
   public OkexStreamingService(String apiUrl, ExchangeSpecification exchangeSpecification) {
     super(apiUrl);
     this.xSpec = exchangeSpecification;
@@ -136,7 +140,7 @@ public class OkexStreamingService extends JsonNettyStreamingService {
       LOG.error("Error parsing incoming message to JSON: {}", message);
       return;
     }
-    // Retry after a successful login
+
     if (jsonNode.has("event")) {
       String event = jsonNode.get("event").asText();
       if ("login".equals(event)) {
@@ -166,19 +170,62 @@ public class OkexStreamingService extends JsonNettyStreamingService {
       if (message.get("arg").has("channel") && message.get("arg").has("instId")) {
         channelName =
             message.get("arg").get("channel").asText() + message.get("arg").get("instId").asText();
+      } else {
+        try {
+          SubscriptionTopic subscriptionTopic = objectMapper.treeToValue(message.get("arg"),
+              SubscriptionTopic.class);
+          channelName = generateSubscriptionUniqueId(subscriptionTopic);
+        } catch (JsonProcessingException ignored) {
+        }
       }
     }
     return channelName;
   }
 
   @Override
+  public String getSubscriptionUniqueId(String channelName, Object... args) {
+    if (args.length > 0 && args[0] instanceof SubscriptionTopic) {
+      SubscriptionTopic topic = (SubscriptionTopic) args[0];
+      return generateSubscriptionUniqueId(topic);
+    }
+    return super.getSubscriptionUniqueId(channelName, args);
+  }
+
+  private String generateSubscriptionUniqueId(SubscriptionTopic topic) {
+    return generateSubscriptionUniqueId(topic.getChannel(), topic.getInstId(), topic.getInstType(),
+        topic.getInstFamily());
+  }
+
+  private String generateSubscriptionUniqueId(String channel, String instId, OkexInstType instType,
+      String instFamily) {
+
+    return String.format("[%s]-[%s]-[%s]-[%s]",
+        channel,
+        instType == null ? "" : instType.name(),
+        StringUtils.isBlank(instId) ? "" : instId,
+        StringUtils.isBlank(instFamily) ? "" : instFamily
+    );
+  }
+
+  @Override
   public String getSubscribeMessage(String channelName, Object... args) throws IOException {
+    if (args.length > 0 && args[0] instanceof SubscriptionTopic) {
+      SubscriptionTopic topic = (SubscriptionTopic) args[0];
+      return objectMapper.writeValueAsString(
+          new OkexSubscribeMessage(SUBSCRIBE, Collections.singletonList(topic)));
+    }
     return objectMapper.writeValueAsString(
         new OkexSubscribeMessage(SUBSCRIBE, Collections.singletonList(getTopic(channelName))));
   }
 
   @Override
   public String getUnsubscribeMessage(String channelName, Object... args) throws IOException {
+    if (args.length > 0 && args[0] instanceof SubscriptionTopic) {
+      SubscriptionTopic topic = (SubscriptionTopic) args[0];
+      return objectMapper.writeValueAsString(
+          new OkexSubscribeMessage(UNSUBSCRIBE, Collections.singletonList(topic)));
+    }
+
     return objectMapper.writeValueAsString(
         new OkexSubscribeMessage(UNSUBSCRIBE, Collections.singletonList(getTopic(channelName))));
   }
@@ -202,6 +249,9 @@ public class OkexStreamingService extends JsonNettyStreamingService {
     } else if (channelName.contains(FUNDING_RATE)) {
       return new OkexSubscribeMessage.SubscriptionTopic(
           FUNDING_RATE, null, null, channelName.replace(FUNDING_RATE, ""));
+    } else if (channelName.contains(POSITIONS)) {
+      return new OkexSubscribeMessage.SubscriptionTopic(
+          POSITIONS, OkexInstType.ANY, null, channelName.replace(POSITIONS, ""));
     } else {
       throw new NotYetImplementedForExchangeException(
           "ChannelName: "
@@ -224,7 +274,8 @@ public class OkexStreamingService extends JsonNettyStreamingService {
   }
 
   /**
-   * Custom client handler in order to execute an external, user-provided handler on channel events.
+   * Custom client handler in order to execute an external, user-provided handler on channel
+   * events.
    */
   class OkxWebSocketClientHandler extends NettyWebSocketClientHandler {
 

@@ -2,6 +2,7 @@ package org.knowm.xchange.okex.service;
 
 import java.util.Base64;
 import javax.crypto.Mac;
+import org.apache.commons.lang3.StringUtils;
 import org.knowm.xchange.service.BaseParamsDigest;
 import si.mazi.rescu.RestInvocation;
 
@@ -23,11 +24,13 @@ public class OkexDigest extends BaseParamsDigest {
     sb.append(restInvocation.getHttpHeadersFromParams().getOrDefault("OK-ACCESS-TIMESTAMP", null));
     sb.append(restInvocation.getHttpMethod());
     sb.append(restInvocation.getPath());
-    if ("GET".equals(restInvocation.getHttpMethod())
-        && !restInvocation.getQueryString().isEmpty()) {
+    if (!restInvocation.getQueryString().isEmpty()) {
       sb.append("?" + restInvocation.getQueryString());
     }
-    sb.append(restInvocation.getRequestBody());
+    String requestBody = restInvocation.getRequestBody();
+    if (StringUtils.isNotEmpty(requestBody)) {
+      sb.append(restInvocation.getRequestBody());
+    }
 
     Mac mac = getMac();
     mac.update(sb.toString().getBytes());

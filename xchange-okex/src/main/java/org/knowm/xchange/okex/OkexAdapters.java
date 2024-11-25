@@ -82,7 +82,7 @@ public class OkexAdapters {
         instrument,
         order.getOrderId(),
         new Date(Long.parseLong(order.getCreationTime())),
-        new BigDecimal(order.getPrice()),
+        new BigDecimal(StringUtils.isBlank(order.getPrice()) ? "0" : order.getPrice()),
         order.getAverageFilledPrice().isEmpty()
             ? BigDecimal.ZERO
             : new BigDecimal(order.getAverageFilledPrice()),

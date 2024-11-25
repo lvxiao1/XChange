@@ -7,9 +7,12 @@ import org.knowm.xchange.dto.account.AccountInfo;
 import org.knowm.xchange.okex.OkexAdapters;
 import org.knowm.xchange.okex.OkexExchange;
 import org.knowm.xchange.okex.dto.OkexException;
+import org.knowm.xchange.okex.dto.OkexPositionMode;
 import org.knowm.xchange.okex.dto.OkexResponse;
 import org.knowm.xchange.okex.dto.account.OkexAccountPositionRisk;
 import org.knowm.xchange.okex.dto.account.OkexAssetBalance;
+import org.knowm.xchange.okex.dto.account.OkexSetPositionModeRequest;
+import org.knowm.xchange.okex.dto.account.OkexSetPositionModeResponse;
 import org.knowm.xchange.okex.dto.account.OkexWalletBalance;
 import org.knowm.xchange.okex.dto.account.OkexWithdrawalResponse;
 import org.knowm.xchange.service.account.AccountService;
@@ -60,5 +63,11 @@ public class OkexAccountService extends OkexAccountServiceRaw implements Account
       return okexResponse.getData().get(0).getWithdrawalId();
     }
     throw new IllegalStateException("Don't know how to withdraw: " + params);
+  }
+
+  public OkexResponse<OkexSetPositionModeResponse> setPositionMode(
+      OkexPositionMode positionMode) throws IOException {
+    return setPositionMode(
+        new OkexSetPositionModeRequest(positionMode.name().toLowerCase()));
   }
 }

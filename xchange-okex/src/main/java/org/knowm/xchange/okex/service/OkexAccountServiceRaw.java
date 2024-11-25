@@ -11,6 +11,7 @@ import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.okex.OkexAuthenticated;
 import org.knowm.xchange.okex.OkexExchange;
 import org.knowm.xchange.okex.dto.OkexException;
+import org.knowm.xchange.okex.dto.OkexPositionMode;
 import org.knowm.xchange.okex.dto.OkexResponse;
 import org.knowm.xchange.okex.dto.account.*;
 import org.knowm.xchange.okex.dto.account.OkexAssetBalance;
@@ -407,6 +408,26 @@ public class OkexAccountServiceRaw extends OkexBaseService {
                             .getExchangeSpecificParametersItem(PARAM_SIMULATED),
                     ccy))
         .withRateLimiter(rateLimiter(OkexAuthenticated.subAccountList))
+        .call();
+  }
+
+  public OkexResponse<OkexSetPositionModeResponse> setPositionMode(OkexSetPositionModeRequest positionMode) throws IOException {
+    return decorateApiCall(
+        () ->
+            this.okexAuthenticated.setPositionMode(
+                exchange.getExchangeSpecification().getApiKey(),
+                signatureCreator,
+                DateUtils.toUTCISODateString(new Date()),
+                (String)
+                    exchange
+                        .getExchangeSpecification()
+                        .getExchangeSpecificParametersItem(PARAM_PASSPHRASE),
+                (String)
+                    exchange
+                        .getExchangeSpecification()
+                        .getExchangeSpecificParametersItem(PARAM_SIMULATED),
+                positionMode))
+        .withRateLimiter(rateLimiter(OkexAuthenticated.setPositionModePath))
         .call();
   }
 }

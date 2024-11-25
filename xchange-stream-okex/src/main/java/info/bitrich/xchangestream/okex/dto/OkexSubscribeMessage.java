@@ -12,13 +12,27 @@ public class OkexSubscribeMessage {
 
   @Data
   @AllArgsConstructor
+  @NoArgsConstructor
   public static class SubscriptionTopic {
-    private final String channel;
+    private String channel;
 
-    private final OkexInstType instType;
+    private OkexInstType instType;
 
-    private final String uly;
+    private String uly;
 
-    private final String instId;
+    private String instId;
+
+    private String instFamily;
+
+    public SubscriptionTopic(String channel, OkexInstType instType, String uly, String instId) {
+      this.channel = channel;
+      this.instType = instType;
+      this.uly = uly;
+      this.instId = instId;
+    }
+
+    public SubscriptionTopic(String channel) {
+      this.channel = channel;
+    }
   }
 }
