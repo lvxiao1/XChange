@@ -170,7 +170,8 @@ public class OkexStreamingService extends JsonNettyStreamingService {
       if (message.get("arg").has("channel") && message.get("arg").has("instId")) {
         channelName =
             message.get("arg").get("channel").asText() + message.get("arg").get("instId").asText();
-      } else {
+      }
+      if (!this.channels.containsKey(channelName)) {
         try {
           SubscriptionTopic subscriptionTopic = objectMapper.treeToValue(message.get("arg"),
               SubscriptionTopic.class);

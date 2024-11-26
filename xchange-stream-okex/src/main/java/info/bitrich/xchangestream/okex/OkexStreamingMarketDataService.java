@@ -4,6 +4,8 @@ import static info.bitrich.xchangestream.okex.OkexStreamingService.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import info.bitrich.xchangestream.core.StreamingMarketDataService;
+import info.bitrich.xchangestream.okex.dto.OkexOrderBookMessage;
+import info.bitrich.xchangestream.okex.dto.OkexSubscribeMessage.SubscriptionTopic;
 import info.bitrich.xchangestream.service.netty.StreamingObjectMapperHelper;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
@@ -153,6 +155,19 @@ public class OkexStreamingMarketDataService implements StreamingMarketDataServic
                 return Observable.fromIterable(new LinkedList<>());
               }
             });
+  }
+
+  public Observable<OkexOrderBookMessage> getOrderBookRaw(String instId,
+      String channelName) {
+    SubscriptionTopic topic = new SubscriptionTopic(channelName, null, null, instId);
+    return service
+        .subscribeChannel(channelName, topic)
+        .filter(message -> message.has("action"))
+        .map(
+            jsonNode -> mapper.treeToValue(
+                jsonNode,
+                OkexOrderBookMessage.class)
+        );
   }
 
   @Override
