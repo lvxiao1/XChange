@@ -54,19 +54,19 @@ public class OkexOrderBookMessage {
      * Checksum value for data validation.
      */
     @JsonProperty("checksum")
-    private Integer checksum;
+    private Long checksum;
 
     /**
      * Sequence ID of the previous push. Only applicable to books, books-l2-tbt, and
      * books50-l2-tbt.
      */
     @JsonProperty("prevSeqId")
-    private Integer previousSequenceId;
+    private Long previousSequenceId;
 
     /**
      * Sequence ID of the current push.
      */
     @JsonProperty("seqId")
-    private Integer sequenceId;
+    private Long sequenceId;
   }
 }
