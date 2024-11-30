@@ -3,71 +3,52 @@ package org.knowm.xchange.okex.dto.marketdata;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.util.Date;
+import lombok.Data;
 
+@Data
 public class OkexTrade {
+  /**
+   * The product ID, e.g., BTC-USDT.
+   */
+  @JsonProperty("instId")
+  private String instId;
 
-  private final String tradeId;
-  private final String instId;
-  private final BigDecimal px;
-  private final String side;
-  private final BigDecimal sz;
-  private final Date ts;
+  /**
+   * The latest transaction ID among aggregated trades.
+   */
+  @JsonProperty("tradeId")
+  private String tradeId;
 
-  public OkexTrade(
-      @JsonProperty("tradeId") String tradeId,
-      @JsonProperty("instId") String instId,
-      @JsonProperty("px") BigDecimal px,
-      @JsonProperty("sz") BigDecimal sz,
-      @JsonProperty("side") String side,
-      @JsonProperty("ts") Date ts) {
-    this.tradeId = tradeId;
-    this.instId = instId;
-    this.px = px;
-    this.sz = sz;
-    this.side = side;
-    this.ts = ts;
-  }
+  /**
+   * The trade price.
+   */
+  @JsonProperty("px")
+  private BigDecimal px;
 
-  public String getTradeId() {
-    return tradeId;
-  }
+  /**
+   * The trade quantity.
+   */
+  @JsonProperty("sz")
+  private BigDecimal sz;
 
-  public String getInstId() {
-    return instId;
-  }
+  /**
+   * The trade direction.
+   * Possible values:
+   * - "buy"
+   * - "sell"
+   */
+  @JsonProperty("side")
+  private String side;
 
-  public BigDecimal getPx() {
-    return px;
-  }
+  /**
+   * The trade timestamp in milliseconds (Unix time format), e.g., 1597026383085.
+   */
+  @JsonProperty("ts")
+  private Date ts;
 
-  public BigDecimal getSz() {
-    return sz;
-  }
-
-  public String getSide() {
-    return side;
-  }
-
-  public Date getTs() {
-    return ts;
-  }
-
-  @Override
-  public String toString() {
-    return "OkexTrade{"
-        + "tradeId='"
-        + tradeId
-        + '\''
-        + ", instId="
-        + instId
-        + ", px="
-        + px
-        + ", side="
-        + side
-        + ", sz="
-        + sz
-        + ", ts="
-        + ts
-        + '}';
-  }
+  /**
+   * The number of aggregated order matches.
+   */
+  @JsonProperty("count")
+  private Integer count;
 }

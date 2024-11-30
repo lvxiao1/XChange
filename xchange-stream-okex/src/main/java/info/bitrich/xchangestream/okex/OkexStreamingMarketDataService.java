@@ -74,6 +74,22 @@ public class OkexStreamingMarketDataService implements StreamingMarketDataServic
             });
   }
 
+  public Observable<OkexTrade> getTradesRaw(String instrumentId, Object... args) {
+    String channelUniqueId = TRADES + instrumentId;
+
+    return service
+        .subscribeChannel(channelUniqueId)
+        .filter(message -> message.has("data"))
+        .flatMap(
+            jsonNode -> {
+              List<OkexTrade> okexTradeList =
+                  mapper.treeToValue(
+                      jsonNode.get("data"),
+                      mapper.getTypeFactory().constructCollectionType(List.class, OkexTrade.class));
+              return Observable.fromIterable(okexTradeList);
+            });
+  }
+
   @Override
   public Observable<FundingRate> getFundingRate(Instrument instrument, Object... args) {
     String channelUniqueId = FUNDING_RATE + OkexAdapters.adaptInstrument(instrument);
