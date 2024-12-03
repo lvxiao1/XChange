@@ -17,6 +17,10 @@ import org.knowm.xchange.bitget.dto.account.BitgetDepositWithdrawRecordDto;
 import org.knowm.xchange.bitget.dto.account.BitgetMainSubTransferRecordDto;
 import org.knowm.xchange.bitget.dto.account.BitgetSubBalanceDto;
 import org.knowm.xchange.bitget.dto.account.BitgetTransferRecordDto;
+import org.knowm.xchange.bitget.dto.trade.ContractCancelOrderDto;
+import org.knowm.xchange.bitget.dto.trade.ContractOrderDetailDto;
+import org.knowm.xchange.bitget.dto.trade.ContractPlaceOrderDto;
+import org.knowm.xchange.bitget.dto.trade.ContractPlaceOrderResponse;
 import org.knowm.xchange.bitget.dto.trade.BitgetFillDto;
 import org.knowm.xchange.bitget.dto.trade.BitgetOrderInfoDto;
 import org.knowm.xchange.bitget.dto.trade.BitgetPlaceOrderDto;
@@ -159,5 +163,40 @@ public interface BitgetAuthenticated {
       @QueryParam("startTime") Long startTime,
       @QueryParam("endTime") Long endTime,
       @QueryParam("idLessThan") String idLessThan)
+      throws IOException, BitgetException;
+
+  @POST
+  @Path("api/v2/mix/order/place-order")
+  @Consumes(MediaType.APPLICATION_JSON)
+  BitgetResponse<ContractPlaceOrderResponse> contractPlaceOrder(
+      @HeaderParam("ACCESS-KEY") String apiKey,
+      @HeaderParam("ACCESS-SIGN") ParamsDigest signer,
+      @HeaderParam("ACCESS-PASSPHRASE") String passphrase,
+      @HeaderParam("ACCESS-TIMESTAMP") SynchronizedValueFactory<Long> timestamp,
+      ContractPlaceOrderDto contractPlaceOrderParams)
+      throws IOException, BitgetException;
+
+  @GET
+  @Path("api/v2/mix/order/detail")
+  BitgetResponse<ContractOrderDetailDto> contractOrderDetail(
+      @HeaderParam("ACCESS-KEY") String apiKey,
+      @HeaderParam("ACCESS-SIGN") ParamsDigest signer,
+      @HeaderParam("ACCESS-PASSPHRASE") String passphrase,
+      @HeaderParam("ACCESS-TIMESTAMP") SynchronizedValueFactory<Long> timestamp,
+      @QueryParam("orderId") String orderId,
+      @QueryParam("clientOid") String clientOid,
+      @QueryParam("productType") String productType,
+      @QueryParam("symbol") String symbol)
+      throws IOException, BitgetException;
+
+  @POST
+  @Path("api/v2/mix/order/cancel-order")
+  @Consumes(MediaType.APPLICATION_JSON)
+  BitgetResponse<ContractPlaceOrderResponse> contractCancelOrder(
+      @HeaderParam("ACCESS-KEY") String apiKey,
+      @HeaderParam("ACCESS-SIGN") ParamsDigest signer,
+      @HeaderParam("ACCESS-PASSPHRASE") String passphrase,
+      @HeaderParam("ACCESS-TIMESTAMP") SynchronizedValueFactory<Long> timestamp,
+      ContractCancelOrderDto contractCancelOrderParams)
       throws IOException, BitgetException;
 }

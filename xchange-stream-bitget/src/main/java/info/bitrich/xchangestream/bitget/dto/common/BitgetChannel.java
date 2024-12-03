@@ -25,10 +25,17 @@ public class BitgetChannel {
   @Getter
   @AllArgsConstructor
   public static enum MarketType {
-    SPOT("SPOT");
-
+    SPOT("SPOT"),
+    USDT_FUTURES("USDT-FUTURES"),
+    COIN_FUTURES("COIN-FUTURES"),
+    USDC_FUTURES("USDC-FUTURES"),
+    SUSDT_FUTURES("SUSDT-FUTURES"),
+    SCOIN_FUTURES("SCOIN-FUTURES"),
+    SUSDC_FUTURES("SUSDC-FUTURES");
     @JsonValue private final String value;
-
+    public boolean isFutures() {
+      return this.value.contains("-FUTURES");
+    }
     public String toString() {
       return value;
     }
@@ -38,12 +45,12 @@ public class BitgetChannel {
   @AllArgsConstructor
   public static enum ChannelType {
     TICKER("ticker"),
-
+    ORDERS("orders"),
     DEPTH("books"),
     DEPTH1("books1"),
     DEPTH5("books5"),
     DEPTH15("books15"),
-
+    POSITIONS("positions"),
     FILL("fill");
 
     @JsonValue private final String value;

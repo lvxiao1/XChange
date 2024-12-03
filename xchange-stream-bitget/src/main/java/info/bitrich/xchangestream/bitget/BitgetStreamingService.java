@@ -30,7 +30,7 @@ public class BitgetStreamingService extends NettyStreamingService<BitgetWsNotifi
 
   /**
    * @param channelName ignored
-   * @param args [{@code ChannelType}, {@code MarketType}, {@code Instrument}/{@code null}]
+   * @param args        [{@code ChannelType}, {@code MarketType}, {@code Instrument}/{@code null}]
    * @return message to be sent for subscribing
    * @see BitgetStreamingAdapters#toSubscriptionId
    */
@@ -45,7 +45,7 @@ public class BitgetStreamingService extends NettyStreamingService<BitgetWsNotifi
 
   /**
    * @param channelName ignored
-   * @param args [{@code ChannelType}, {@code MarketType}, {@code Instrument}/{@code null}]
+   * @param args        [{@code ChannelType}, {@code MarketType}, {@code Instrument}/{@code null}]
    * @return message to be sent for unsubscribing
    * @see BitgetStreamingAdapters#toSubscriptionId
    */
@@ -78,7 +78,7 @@ public class BitgetStreamingService extends NettyStreamingService<BitgetWsNotifi
 
   /**
    * @param channelName name of channel
-   * @param args array with [{@code MarketType}, {@code Instrument}, ...]
+   * @param args        array with [{@code MarketType}, {@code Instrument}, ...]
    * @return subscription id in form of "marketType_channelName_instrument1_instrumentX"
    */
   @Override
@@ -102,8 +102,11 @@ public class BitgetStreamingService extends NettyStreamingService<BitgetWsNotifi
         ((ObjectNode) jsonNode).put("messageType", "event");
       }
       // copy nested value of arg.channel to the root of json to detect deserialization type
-      else if (jsonNode.has("arg") && jsonNode.get("arg").has("channel")) {
-        ((ObjectNode) jsonNode).put("messageType", jsonNode.get("arg").get("channel").asText());
+      else if (jsonNode.has("arg") && jsonNode.get("arg").has("channel")
+          && jsonNode.get("arg").has("instType")) {
+        String channel = jsonNode.get("arg").get("channel").asText();
+        String instType = jsonNode.get("arg").get("instType").asText();
+        ((ObjectNode) jsonNode).put("messageType", channel + ":" + instType.toUpperCase());
       }
 
       bitgetWsNotification = objectMapper.treeToValue(jsonNode, BitgetWsNotification.class);

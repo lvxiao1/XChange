@@ -7,6 +7,10 @@ import org.knowm.xchange.bitget.BitgetExchange;
 import org.knowm.xchange.bitget.dto.trade.BitgetFillDto;
 import org.knowm.xchange.bitget.dto.trade.BitgetOrderInfoDto;
 import org.knowm.xchange.bitget.dto.trade.BitgetPlaceOrderDto;
+import org.knowm.xchange.bitget.dto.trade.ContractCancelOrderDto;
+import org.knowm.xchange.bitget.dto.trade.ContractOrderDetailDto;
+import org.knowm.xchange.bitget.dto.trade.ContractPlaceOrderDto;
+import org.knowm.xchange.bitget.dto.trade.ContractPlaceOrderResponse;
 import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamInstrument;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamLimit;
@@ -79,5 +83,31 @@ public class BitgetTradeServiceRaw extends BitgetBaseService {
         .createOrder(
             apiKey, bitgetDigest, passphrase, exchange.getNonceFactory(), bitgetPlaceOrderDto)
         .getData();
+  }
+
+  public ContractPlaceOrderResponse createContractOrder(ContractPlaceOrderDto bitgetPlaceOrderDto)
+      throws IOException {
+    return bitgetAuthenticated.contractPlaceOrder
+            (apiKey, bitgetDigest, passphrase, exchange.getNonceFactory(), bitgetPlaceOrderDto)
+        .getData();
+  }
+
+  public ContractOrderDetailDto contractOrderDetail(String orderId, String clientOid,
+      String productType, String symbol) throws IOException {
+    return bitgetAuthenticated.contractOrderDetail(apiKey, bitgetDigest, passphrase,
+        exchange.getNonceFactory(),
+        orderId,
+        clientOid,
+        productType,
+        symbol
+    ).getData();
+  }
+
+  public ContractPlaceOrderResponse contractCancelOrder(ContractCancelOrderDto dto)
+      throws IOException {
+    return bitgetAuthenticated.contractCancelOrder(apiKey, bitgetDigest, passphrase,
+        exchange.getNonceFactory(),
+        dto
+    ).getData();
   }
 }

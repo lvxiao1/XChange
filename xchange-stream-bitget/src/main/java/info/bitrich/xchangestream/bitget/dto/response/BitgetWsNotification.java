@@ -23,11 +23,23 @@ import lombok.extern.jackson.Jacksonized;
     defaultImpl = BitgetWsNotification.class)
 @JsonSubTypes({
   @Type(value = BitgetEventNotification.class, name = "event"),
-  @Type(value = BitgetTickerNotification.class, name = "ticker"),
-  @Type(value = BitgetWsOrderBookSnapshotNotification.class, name = "books1"),
-  @Type(value = BitgetWsOrderBookSnapshotNotification.class, name = "books5"),
-  @Type(value = BitgetWsOrderBookSnapshotNotification.class, name = "books15"),
-  @Type(value = BitgetWsUserTradeNotification.class, name = "fill"),
+  @Type(value = BitgetTickerNotification.class, name = "ticker:SPOT"),
+  @Type(value = BitgetWsOrderBookSnapshotNotification.class, name = "books1:SPOT"),
+  @Type(value = BitgetWsOrderBookSnapshotNotification.class, name = "books5:SPOT"),
+  @Type(value = BitgetWsOrderBookSnapshotNotification.class, name = "books15:SPOT"),
+  @Type(value = BitgetWsUserTradeNotification.class, name = "fill:SPOT"),
+  @Type(value = BitgetWsContractOrderNotification.class, name = "orders:USDT-FUTURES"),
+  @Type(value = BitgetWsContractOrderNotification.class, name = "orders:COIN-FUTURES"),
+  @Type(value = BitgetWsContractOrderNotification.class, name = "orders:USDC-FUTURES"),
+  @Type(value = BitgetWsContractOrderNotification.class, name = "orders:SUSDT-FUTURES"),
+  @Type(value = BitgetWsContractOrderNotification.class, name = "orders:SCOIN-FUTURES"),
+  @Type(value = BitgetWsContractOrderNotification.class, name = "orders:SUSDC-FUTURES"),
+  @Type(value = BitGetWsContractPositionsNotification.class, name = "positions:USDT-FUTURES"),
+  @Type(value = BitGetWsContractPositionsNotification.class, name = "positions:COIN-FUTURES"),
+  @Type(value = BitGetWsContractPositionsNotification.class, name = "positions:USDC-FUTURES"),
+  @Type(value = BitGetWsContractPositionsNotification.class, name = "positions:SUSDT-FUTURES"),
+  @Type(value = BitGetWsContractPositionsNotification.class, name = "positions:SCOIN-FUTURES"),
+  @Type(value = BitGetWsContractPositionsNotification.class, name = "positions:SUSDC-FUTURES"),
 })
 @Data
 @SuperBuilder(toBuilder = true)
