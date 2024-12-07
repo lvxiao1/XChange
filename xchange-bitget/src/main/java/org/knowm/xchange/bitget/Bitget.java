@@ -18,6 +18,7 @@ import org.knowm.xchange.bitget.dto.marketdata.BitgetMarketDepthDto;
 import org.knowm.xchange.bitget.dto.marketdata.BitgetServerTime;
 import org.knowm.xchange.bitget.dto.marketdata.BitgetSymbolDto;
 import org.knowm.xchange.bitget.dto.marketdata.BitgetTickerDto;
+import org.knowm.xchange.bitget.dto.marketdata.MarketContractTradeDto;
 
 @Path("")
 @Produces(MediaType.APPLICATION_JSON)
@@ -77,6 +78,17 @@ public interface Bitget {
   @GET
   @Path("api/v2/mix/market/funding-time")
   BitgetResponse<List<BitgetContractFundRateTimeDto>> contractFundRateTime(@QueryParam("productType") String productType, @QueryParam("symbol") String symbol)
+      throws IOException, BitgetException;
+
+  @GET
+  @Path("/api/v2/mix/market/fills-history")
+  BitgetResponse<List<MarketContractTradeDto>> contractFillsHistory(
+      @QueryParam("productType") String productType,
+      @QueryParam("symbol") String symbol,
+      @QueryParam("limit") Integer limit,
+      @QueryParam("idLessThan") String idLessThan,
+      @QueryParam("startTime") Long startTime,
+      @QueryParam("endTime") Long endTime)
       throws IOException, BitgetException;
 
 }

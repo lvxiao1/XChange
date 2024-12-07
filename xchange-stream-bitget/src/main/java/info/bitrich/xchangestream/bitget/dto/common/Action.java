@@ -4,5 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public enum Action {
   @JsonProperty("snapshot")
-  SNAPSHOT
+  SNAPSHOT,
+  @JsonProperty("update")
+  UPDATE
 }

@@ -4,13 +4,18 @@ import java.io.IOException;
 import java.util.List;
 import org.knowm.xchange.bitget.BitgetAdapters;
 import org.knowm.xchange.bitget.BitgetExchange;
+import org.knowm.xchange.bitget.dto.account.AccountBillDto;
 import org.knowm.xchange.bitget.dto.account.BitgetBalanceDto;
 import org.knowm.xchange.bitget.dto.account.BitgetDepositWithdrawRecordDto;
 import org.knowm.xchange.bitget.dto.account.BitgetMainSubTransferRecordDto;
 import org.knowm.xchange.bitget.dto.account.BitgetSubBalanceDto;
 import org.knowm.xchange.bitget.dto.account.BitgetTransferRecordDto;
+import org.knowm.xchange.bitget.dto.account.ContractAccountDto;
+import org.knowm.xchange.bitget.dto.account.TradeRateDto;
 import org.knowm.xchange.bitget.dto.account.params.BitgetMainSubTransferHistoryParams;
 import org.knowm.xchange.bitget.dto.account.params.BitgetTransferHistoryParams;
+import org.knowm.xchange.bitget.dto.trade.ContractCancelOrderDto;
+import org.knowm.xchange.bitget.dto.trade.ContractPlaceOrderResponse;
 import org.knowm.xchange.bitget.service.params.BitgetFundingHistoryParams;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamClientOid;
@@ -216,5 +221,48 @@ public class BitgetAccountServiceRaw extends BitgetBaseService {
             to,
             lastTradeId)
         .getData();
+  }
+
+  public ContractAccountDto contractAccount(String productType, String symbol, String marginCoin)
+      throws IOException {
+    return bitgetAuthenticated.contractAccount(apiKey, bitgetDigest, passphrase,
+        exchange.getNonceFactory(),
+        productType,
+        symbol,
+        marginCoin
+    ).getData();
+  }
+
+  /**
+   *
+   * @param businessType mix spot margin
+   */
+  public TradeRateDto accountTradeRate(String symbol, String businessType)
+      throws IOException {
+    return bitgetAuthenticated.accountTradeRate(
+        apiKey,
+        bitgetDigest,
+        passphrase,
+        exchange.getNonceFactory(),
+        symbol,
+        businessType
+    ).getData();
+  }
+
+  public AccountBillDto accountBill(String productType, String businessType, String coin, String idLessThan, Long startTime, Long endTime, Long limit)
+      throws IOException {
+    return bitgetAuthenticated.accountBill(
+        apiKey,
+        bitgetDigest,
+        passphrase,
+        exchange.getNonceFactory(),
+        productType,
+        coin,
+        businessType,
+        idLessThan,
+        startTime,
+        endTime,
+        limit
+    ).getData();
   }
 }

@@ -11,13 +11,34 @@ import info.bitrich.xchangestream.bitget.dto.request.BitgetWsRequest;
 import info.bitrich.xchangestream.bitget.dto.response.BitgetEventNotification;
 import info.bitrich.xchangestream.bitget.dto.response.BitgetWsNotification;
 import info.bitrich.xchangestream.service.netty.NettyStreamingService;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.CompletableSource;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.disposables.Disposable;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class BitgetStreamingService extends NettyStreamingService<BitgetWsNotification> {
 
   protected final ObjectMapper objectMapper = Config.getInstance().getObjectMapper();
+  private final Observable<Long> pingPongSrc = Observable.interval(15, 15, TimeUnit.SECONDS);
+  private Disposable pingPongSubscription;
+  @Override
+  public Completable connect() {
+    return super.openConnection().andThen((CompletableSource) (completable) ->{
+      try {
+        if (pingPongSubscription != null && !pingPongSubscription.isDisposed()) {
+          pingPongSubscription.dispose();
+        }
+        pingPongSubscription = pingPongSrc.subscribe(o -> this.sendMessage("ping"));
+        completable.onComplete();
+      }catch (Exception e){
+        completable.onError(e);
+      }
+    });
+  }
 
   public BitgetStreamingService(String apiUri) {
     super(apiUri, Integer.MAX_VALUE);
@@ -92,7 +113,9 @@ public class BitgetStreamingService extends NettyStreamingService<BitgetWsNotifi
   public void messageHandler(String message) {
     log.debug("Received message: {}", message);
     BitgetWsNotification bitgetWsNotification;
-
+    if (message.equals("pong")) {
+      return;
+    }
     // Parse incoming message to JSON
     try {
       JsonNode jsonNode = objectMapper.readTree(message);

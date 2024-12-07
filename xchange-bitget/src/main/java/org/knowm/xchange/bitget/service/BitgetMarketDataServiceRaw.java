@@ -18,6 +18,7 @@ import org.knowm.xchange.bitget.dto.marketdata.BitgetMarketDepthDto;
 import org.knowm.xchange.bitget.dto.marketdata.BitgetServerTime;
 import org.knowm.xchange.bitget.dto.marketdata.BitgetSymbolDto;
 import org.knowm.xchange.bitget.dto.marketdata.BitgetTickerDto;
+import org.knowm.xchange.bitget.dto.marketdata.MarketContractTradeDto;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.instrument.Instrument;
 
@@ -77,5 +78,15 @@ public class BitgetMarketDataServiceRaw extends BitgetBaseService {
   public List<BitgetContractFundRateTimeDto> contractFundRateTime(String productType, String symbol)
       throws IOException{
     return bitget.contractFundRateTime(productType, symbol).getData();
+  }
+
+  public List<MarketContractTradeDto> contractFillsHistory(
+      String productType,
+      String symbol,
+      Integer limit,
+      String idLessThan,
+      Long startTime,
+      Long endTime) throws IOException{
+    return bitget.contractFillsHistory(productType, symbol, limit, idLessThan, startTime,endTime).getData();
   }
 }

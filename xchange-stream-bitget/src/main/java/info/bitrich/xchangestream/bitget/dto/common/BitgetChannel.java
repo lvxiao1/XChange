@@ -51,6 +51,7 @@ public class BitgetChannel {
     DEPTH5("books5"),
     DEPTH15("books15"),
     POSITIONS("positions"),
+    TRADE("trade"),
     FILL("fill");
 
     @JsonValue private final String value;
