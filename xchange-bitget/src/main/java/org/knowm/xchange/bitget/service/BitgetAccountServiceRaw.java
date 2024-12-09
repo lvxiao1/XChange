@@ -1,17 +1,21 @@
 package org.knowm.xchange.bitget.service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
+import lombok.var;
 import org.knowm.xchange.bitget.BitgetAdapters;
 import org.knowm.xchange.bitget.BitgetExchange;
 import org.knowm.xchange.bitget.dto.account.AccountBillDto;
 import org.knowm.xchange.bitget.dto.account.BitgetBalanceDto;
+import org.knowm.xchange.bitget.dto.account.BitgetContractLeverageDto;
 import org.knowm.xchange.bitget.dto.account.BitgetDepositWithdrawRecordDto;
 import org.knowm.xchange.bitget.dto.account.BitgetMainSubTransferRecordDto;
 import org.knowm.xchange.bitget.dto.account.BitgetSubBalanceDto;
 import org.knowm.xchange.bitget.dto.account.BitgetTransferRecordDto;
 import org.knowm.xchange.bitget.dto.account.ContractAccountDto;
 import org.knowm.xchange.bitget.dto.account.TradeRateDto;
+import org.knowm.xchange.bitget.dto.account.params.BitgetContractSetLeverageParams;
 import org.knowm.xchange.bitget.dto.account.params.BitgetMainSubTransferHistoryParams;
 import org.knowm.xchange.bitget.dto.account.params.BitgetTransferHistoryParams;
 import org.knowm.xchange.bitget.dto.trade.ContractCancelOrderDto;
@@ -264,5 +268,28 @@ public class BitgetAccountServiceRaw extends BitgetBaseService {
         endTime,
         limit
     ).getData();
+  }
+
+  public BitgetContractLeverageDto contractSetLeverage(String symbol,
+      String productType,
+      String marginCoin,
+      BigDecimal leverage,
+      String holdSide) throws IOException {
+
+    BitgetContractSetLeverageParams params = BitgetContractSetLeverageParams.builder()
+        .leverage(leverage)
+        .productType(productType)
+        .marginCoin(marginCoin)
+        .symbol(symbol)
+        .holdSide(holdSide)
+        .build();
+
+    return bitgetAuthenticated.contractSetLeverage(
+        apiKey,
+        bitgetDigest,
+        passphrase,
+        exchange.getNonceFactory(),
+        params
+        ).getData();
   }
 }

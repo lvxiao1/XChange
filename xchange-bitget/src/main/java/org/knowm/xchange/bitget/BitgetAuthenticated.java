@@ -14,12 +14,14 @@ import org.knowm.xchange.bitget.dto.BitgetException;
 import org.knowm.xchange.bitget.dto.BitgetResponse;
 import org.knowm.xchange.bitget.dto.account.AccountBillDto;
 import org.knowm.xchange.bitget.dto.account.BitgetBalanceDto;
+import org.knowm.xchange.bitget.dto.account.BitgetContractLeverageDto;
 import org.knowm.xchange.bitget.dto.account.BitgetDepositWithdrawRecordDto;
 import org.knowm.xchange.bitget.dto.account.BitgetMainSubTransferRecordDto;
 import org.knowm.xchange.bitget.dto.account.BitgetSubBalanceDto;
 import org.knowm.xchange.bitget.dto.account.BitgetTransferRecordDto;
 import org.knowm.xchange.bitget.dto.account.ContractAccountDto;
 import org.knowm.xchange.bitget.dto.account.TradeRateDto;
+import org.knowm.xchange.bitget.dto.account.params.BitgetContractSetLeverageParams;
 import org.knowm.xchange.bitget.dto.trade.ContractCancelOrderDto;
 import org.knowm.xchange.bitget.dto.trade.ContractOrderDetailDto;
 import org.knowm.xchange.bitget.dto.trade.ContractPlaceOrderDto;
@@ -241,4 +243,16 @@ public interface BitgetAuthenticated {
       @QueryParam("endTime") Long endTime,
       @QueryParam("limit") Long limit
       )throws IOException, BitgetException;
+
+
+  @POST
+  @Path("api/v2/mix/account/set-leverage")
+  @Consumes(MediaType.APPLICATION_JSON)
+  BitgetResponse<BitgetContractLeverageDto> contractSetLeverage(
+      @HeaderParam("ACCESS-KEY") String apiKey,
+      @HeaderParam("ACCESS-SIGN") ParamsDigest signer,
+      @HeaderParam("ACCESS-PASSPHRASE") String passphrase,
+      @HeaderParam("ACCESS-TIMESTAMP") SynchronizedValueFactory<Long> timestamp,
+      BitgetContractSetLeverageParams contractSetLeverageParams)
+      throws IOException, BitgetException;
 }
