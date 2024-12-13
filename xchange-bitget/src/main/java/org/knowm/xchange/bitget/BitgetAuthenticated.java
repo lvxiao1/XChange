@@ -22,6 +22,7 @@ import org.knowm.xchange.bitget.dto.account.BitgetTransferRecordDto;
 import org.knowm.xchange.bitget.dto.account.ContractAccountDto;
 import org.knowm.xchange.bitget.dto.account.TradeRateDto;
 import org.knowm.xchange.bitget.dto.account.params.BitgetContractSetLeverageParams;
+import org.knowm.xchange.bitget.dto.account.params.BitgetContractTpslOrderParams;
 import org.knowm.xchange.bitget.dto.trade.ContractCancelOrderDto;
 import org.knowm.xchange.bitget.dto.trade.ContractOrderDetailDto;
 import org.knowm.xchange.bitget.dto.trade.ContractPlaceOrderDto;
@@ -254,5 +255,16 @@ public interface BitgetAuthenticated {
       @HeaderParam("ACCESS-PASSPHRASE") String passphrase,
       @HeaderParam("ACCESS-TIMESTAMP") SynchronizedValueFactory<Long> timestamp,
       BitgetContractSetLeverageParams contractSetLeverageParams)
+      throws IOException, BitgetException;
+
+  @POST
+  @Path("api/v2/mix/order/place-tpsl-order")
+  @Consumes(MediaType.APPLICATION_JSON)
+  BitgetResponse<ContractPlaceOrderResponse> contractPlaceTpslOrder(
+      @HeaderParam("ACCESS-KEY") String apiKey,
+      @HeaderParam("ACCESS-SIGN") ParamsDigest signer,
+      @HeaderParam("ACCESS-PASSPHRASE") String passphrase,
+      @HeaderParam("ACCESS-TIMESTAMP") SynchronizedValueFactory<Long> timestamp,
+      BitgetContractTpslOrderParams tpslOrderParams)
       throws IOException, BitgetException;
 }

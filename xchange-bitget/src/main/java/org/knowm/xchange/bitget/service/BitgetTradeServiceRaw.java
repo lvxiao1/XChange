@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import org.knowm.xchange.bitget.BitgetAdapters;
 import org.knowm.xchange.bitget.BitgetExchange;
+import org.knowm.xchange.bitget.dto.account.params.BitgetContractTpslOrderParams;
 import org.knowm.xchange.bitget.dto.trade.BitgetFillDto;
 import org.knowm.xchange.bitget.dto.trade.BitgetOrderInfoDto;
 import org.knowm.xchange.bitget.dto.trade.BitgetPlaceOrderDto;
@@ -110,4 +111,13 @@ public class BitgetTradeServiceRaw extends BitgetBaseService {
         dto
     ).getData();
   }
+
+  public ContractPlaceOrderResponse contractPlaceTpslOrder(BitgetContractTpslOrderParams tpslOrderParams)
+      throws IOException {
+    return bitgetAuthenticated.contractPlaceTpslOrder(apiKey, bitgetDigest, passphrase,
+        exchange.getNonceFactory(),
+        tpslOrderParams
+    ).getData();
+  }
+
 }
